@@ -1,0 +1,27 @@
+# Node
+node_modules/
+.next/
+.env*.local
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# 生成されたコード（buf generate で再生成可能）
+# backend/gen/
+# frontend/src/gen/
+# ↑ 学習用なので一旦コミット。本番では除外推奨
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
