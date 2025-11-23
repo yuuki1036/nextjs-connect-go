@@ -44,6 +44,9 @@ next-env.d.ts
 *.so
 *.dylib
 
+# Go build artifacts
+backend/bin/
+
 # ===== 生成されたコード =====
 # buf generate で再生成可能
 # backend/gen/
