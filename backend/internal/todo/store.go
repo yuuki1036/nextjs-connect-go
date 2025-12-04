@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	todov1 "github.com/yuki/nextjs-connect-go/backend/gen/todo/v1"
+	todov1 "github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 

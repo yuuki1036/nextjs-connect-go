@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package todo.v1;
 
-option go_package = "github.com/yuki/nextjs-connect-go/backend/gen/todo/v1;todov1";
+option go_package = "github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1;todov1";
 
 import "google/protobuf/timestamp.proto";
 

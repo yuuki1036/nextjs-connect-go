@@ -4,8 +4,8 @@ import (
 	"context"
 
 	"connectrpc.com/connect"
-	todov1 "github.com/yuki/nextjs-connect-go/backend/gen/todo/v1"
-	"github.com/yuki/nextjs-connect-go/backend/gen/todo/v1/todov1connect"
+	todov1 "github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1"
+	"github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1/todov1connect"
 )
 
 // Service は TodoService の実装

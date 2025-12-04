@@ -1,4 +1,4 @@
-module github.com/yuki/nextjs-connect-go/backend
+module github.com/yuuki1036/nextjs-connect-go/backend
 
 go 1.24.0
 
