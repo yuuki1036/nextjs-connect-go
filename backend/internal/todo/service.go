@@ -8,12 +8,10 @@ import (
 	"github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1/todov1connect"
 )
 
-// Service は TodoService の実装
 type Service struct {
 	store Store
 }
 
-// NewService は新しい Service を作成
 func NewService(store Store) *Service {
 	return &Service{
 		store: store,
@@ -23,7 +21,6 @@ func NewService(store Store) *Service {
 // コンパイル時に TodoServiceHandler インターフェースを実装しているか確認
 var _ todov1connect.TodoServiceHandler = (*Service)(nil)
 
-// CreateTodo は新しい TODO を作成
 func (s *Service) CreateTodo(
 	ctx context.Context,
 	req *connect.Request[todov1.CreateTodoRequest],
@@ -38,7 +35,6 @@ func (s *Service) CreateTodo(
 	}), nil
 }
 
-// GetTodo は指定された ID の TODO を取得
 func (s *Service) GetTodo(
 	ctx context.Context,
 	req *connect.Request[todov1.GetTodoRequest],
@@ -53,7 +49,6 @@ func (s *Service) GetTodo(
 	}), nil
 }
 
-// ListTodos はすべての TODO を取得
 func (s *Service) ListTodos(
 	ctx context.Context,
 	req *connect.Request[todov1.ListTodosRequest],
@@ -68,7 +63,6 @@ func (s *Service) ListTodos(
 	}), nil
 }
 
-// UpdateTodo は TODO を更新
 func (s *Service) UpdateTodo(
 	ctx context.Context,
 	req *connect.Request[todov1.UpdateTodoRequest],
@@ -97,7 +91,6 @@ func (s *Service) UpdateTodo(
 	}), nil
 }
 
-// DeleteTodo は TODO を削除
 func (s *Service) DeleteTodo(
 	ctx context.Context,
 	req *connect.Request[todov1.DeleteTodoRequest],
