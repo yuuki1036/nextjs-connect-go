@@ -6,7 +6,6 @@ import { createConnectTransport } from '@connectrpc/connect-node';
 import { TodoService } from '@/gen/todo/v1/todo_pb';
 import type { Todo } from '@/gen/todo/v1/todo_pb';
 
-// Server-side Connect クライアントの作成
 function getClient() {
   const transport = createConnectTransport({
     baseUrl: process.env.BACKEND_URL || 'http://localhost:8081',
@@ -15,7 +14,6 @@ function getClient() {
   return createClient(TodoService, transport);
 }
 
-// TODO一覧を取得
 export async function getTodos(): Promise<Todo[]> {
   try {
     const client = getClient();
@@ -27,7 +25,6 @@ export async function getTodos(): Promise<Todo[]> {
   }
 }
 
-// TODOを作成
 export async function createTodo(formData: FormData) {
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
@@ -51,7 +48,6 @@ export async function createTodo(formData: FormData) {
   }
 }
 
-// TODOを更新（完了状態を切り替え）
 export async function toggleTodo(id: string, completed: boolean) {
   try {
     const client = getClient();
@@ -68,7 +64,6 @@ export async function toggleTodo(id: string, completed: boolean) {
   }
 }
 
-// TODOを削除
 export async function deleteTodo(id: string) {
   try {
     const client = getClient();
