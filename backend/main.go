@@ -5,6 +5,8 @@ import (
 	"log"
 	"net/http"
 
+	"connectrpc.com/connect"
+	"connectrpc.com/validate"
 	"github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1/todov1connect"
 	"github.com/yuuki1036/nextjs-connect-go/backend/internal/todo"
 )
@@ -13,7 +15,13 @@ func main() {
 	store := todo.NewInMemoryStore()
 	service := todo.NewService(store)
 
-	path, handler := todov1connect.NewTodoServiceHandler(service)
+	// protovalidate interceptor
+	validateInterceptor := validate.NewInterceptor()
+
+	path, handler := todov1connect.NewTodoServiceHandler(
+		service,
+		connect.WithInterceptors(validateInterceptor),
+	)
 
 	mux := http.NewServeMux()
 	mux.Handle(path, handler)
