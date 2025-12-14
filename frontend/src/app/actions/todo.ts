@@ -9,6 +9,7 @@ import type { Todo } from '@/gen/todo/v1/todo_pb';
 function getClient() {
   const transport = createConnectTransport({
     baseUrl: process.env.BACKEND_URL || 'http://localhost:8081',
+    httpVersion: '1.1',
   });
 
   return createClient(TodoService, transport);
