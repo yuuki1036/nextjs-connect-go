@@ -5,6 +5,7 @@ package todo.v1;
 option go_package = "github.com/yuuki1036/nextjs-connect-go/backend/gen/todo/v1;todov1";
 
 import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
 
 message Todo {
   string id = 1;
@@ -16,7 +17,7 @@ message Todo {
 }
 
 message CreateTodoRequest {
-  string title = 1;
+  string title = 1 [(buf.validate.field).string.min_len = 1];
   string description = 2;
 }
 
@@ -25,7 +26,7 @@ message CreateTodoResponse {
 }
 
 message GetTodoRequest {
-  string id = 1;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message GetTodoResponse {
@@ -43,7 +44,7 @@ message ListTodosResponse {
 }
 
 message UpdateTodoRequest {
-  string id = 1;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
   optional string title = 2;
   optional string description = 3;
   optional bool completed = 4;
@@ -54,7 +55,7 @@ message UpdateTodoResponse {
 }
 
 message DeleteTodoRequest {
-  string id = 1;
+  string id = 1 [(buf.validate.field).string.min_len = 1];
 }
 
 message DeleteTodoResponse {
