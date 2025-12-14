@@ -5,6 +5,12 @@ import { createClient } from '@connectrpc/connect';
 import { createConnectTransport } from '@connectrpc/connect-node';
 import { TodoService } from '@/gen/todo/v1/todo_pb';
 import type { Todo } from '@/gen/todo/v1/todo_pb';
+import { z } from 'zod';
+
+const CreateTodoSchema = z.object({
+  title: z.string().min(1, 'タイトルは必須です'),
+  description: z.string().default(''),
+});
 
 function getClient() {
   const transport = createConnectTransport({
@@ -27,19 +33,18 @@ export async function getTodos(): Promise<Todo[]> {
 }
 
 export async function createTodo(formData: FormData) {
-  const title = formData.get('title');
-  const description = formData.get('description');
+  const parsed = CreateTodoSchema.safeParse({
+    title: formData.get('title'),
+    description: formData.get('description') || '',
+  });
 
-  if (typeof title !== 'string' || !title.trim()) {
-    return { error: 'タイトルは必須です' };
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
   }
 
   try {
     const client = getClient();
-    await client.createTodo({
-      title: title.trim(),
-      description: typeof description === 'string' ? description.trim() : '',
-    });
+    await client.createTodo(parsed.data);
 
     revalidatePath('/');
     return { success: true };
