@@ -3,14 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@connectrpc/connect';
 import { createConnectTransport } from '@connectrpc/connect-node';
-import { TodoService } from '@/src/gen/todo/v1/todo_pb';
-import type { Todo } from '@/src/gen/todo/v1/todo_pb';
+import { TodoService } from '@/gen/todo/v1/todo_pb';
+import type { Todo } from '@/gen/todo/v1/todo_pb';
 
 // Server-side Connect クライアントの作成
 function getClient() {
   const transport = createConnectTransport({
     baseUrl: process.env.BACKEND_URL || 'http://localhost:8081',
-    httpVersion: '2',
   });
 
   return createClient(TodoService, transport);

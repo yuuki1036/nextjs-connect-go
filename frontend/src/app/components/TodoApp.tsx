@@ -1,7 +1,7 @@
 'use client';
 
 import { useTransition } from 'react';
-import type { Todo } from '@/src/gen/todo/v1/todo_pb';
+import type { Todo } from '@/gen/todo/v1/todo_pb';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { createTodo, toggleTodo, deleteTodo } from '../actions/todo';
 
