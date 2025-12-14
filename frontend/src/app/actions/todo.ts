@@ -27,10 +27,10 @@ export async function getTodos(): Promise<Todo[]> {
 }
 
 export async function createTodo(formData: FormData) {
-  const title = formData.get('title') as string;
-  const description = formData.get('description') as string;
+  const title = formData.get('title');
+  const description = formData.get('description');
 
-  if (!title?.trim()) {
+  if (typeof title !== 'string' || !title.trim()) {
     return { error: 'タイトルは必須です' };
   }
 
@@ -38,7 +38,7 @@ export async function createTodo(formData: FormData) {
     const client = getClient();
     await client.createTodo({
       title: title.trim(),
-      description: description?.trim() || '',
+      description: typeof description === 'string' ? description.trim() : '',
     });
 
     revalidatePath('/');
