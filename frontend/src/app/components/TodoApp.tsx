@@ -1,15 +1,16 @@
 'use client';
 
-import { useTransition } from 'react';
+import { use, useTransition } from 'react';
 import type { Todo } from '@/gen/todo/v1/todo_pb';
 import { timestampDate } from '@bufbuild/protobuf/wkt';
 import { createTodo, toggleTodo, deleteTodo } from '../actions/todo';
 
 interface TodoAppProps {
-  initialTodos: Todo[];
+  todosPromise: Promise<Todo[]>;
 }
 
-export function TodoApp({ initialTodos }: TodoAppProps) {
+export function TodoApp({ todosPromise }: TodoAppProps) {
+  const todos = use(todosPromise);
   const [isPending, startTransition] = useTransition();
 
   // TODO作成
@@ -100,13 +101,13 @@ export function TodoApp({ initialTodos }: TodoAppProps) {
 
       {/* TODO 一覧 */}
       <div>
-        <h2>TODO 一覧 ({initialTodos.length}件)</h2>
+        <h2>TODO 一覧 ({todos.length}件)</h2>
 
-        {initialTodos.length === 0 ? (
+        {todos.length === 0 ? (
           <p style={{ color: '#666' }}>TODO がありません</p>
         ) : (
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            {initialTodos.map((todo) => (
+            {todos.map((todo) => (
               <li
                 key={todo.id}
                 style={{
