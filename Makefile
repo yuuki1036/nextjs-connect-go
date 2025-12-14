@@ -67,7 +67,7 @@ build: build-backend ## すべてをビルド
 
 build-backend: ## バックエンドをビルド
 	@echo "🔨 バックエンドをビルド中..."
-	cd backend && go build -o bin/server ./cmd/server
+	cd backend && go build -o bin/server .
 	@echo "✅ ビルド完了: backend/bin/server"
 
 # ========================================
