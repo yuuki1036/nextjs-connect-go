@@ -1,0 +1,35 @@
+syntax = "proto3";
+
+package chat.v1;
+
+option go_package = "github.com/yuuki1036/nextjs-connect-go/backend/gen/chat/v1;chatv1";
+
+import "google/protobuf/timestamp.proto";
+import "buf/validate/validate.proto";
+
+message ChatMessage {
+  string id = 1;
+  string user = 2;
+  string content = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+message SendMessageRequest {
+  string user = 1 [(buf.validate.field).string.min_len = 1];
+  string content = 2 [(buf.validate.field).string.min_len = 1];
+}
+
+message SendMessageResponse {
+  ChatMessage message = 1;
+}
+
+message SubscribeRequest {
+  string user = 1;
+}
+
+service ChatService {
+  // Unary RPC: メッセージを送信 → 結果を1回返す
+  rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
+  // Server Streaming RPC: 購読開始 → 新着メッセージが継続的に流れてくる
+  rpc Subscribe(SubscribeRequest) returns (stream ChatMessage);
+}
