@@ -15,3 +15,5 @@ plugins:
     out: ../frontend/src/gen
     opt:
       - target=ts
+    # 依存関係（protovalidate等）のTypeScript型も生成
+    include_imports: true
