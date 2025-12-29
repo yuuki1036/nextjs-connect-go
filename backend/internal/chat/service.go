@@ -33,6 +33,7 @@ func (s *Service) SendMessage(
 		User:      req.Msg.User,
 		Content:   req.Msg.Content,
 		Timestamp: timestamppb.Now(),
+		Type:      chatv1.MessageType_MESSAGE_TYPE_MESSAGE,
 	}
 
 	s.hub.Broadcast(msg)
@@ -42,20 +43,38 @@ func (s *Service) SendMessage(
 	}), nil
 }
 
+// システムメッセージを作成するヘルパー
+func (s *Service) createSystemMessage(user string, msgType chatv1.MessageType) *chatv1.ChatMessage {
+	return &chatv1.ChatMessage{
+		Id:        fmt.Sprintf("sys-%d", s.messageID.Add(1)),
+		User:      user,
+		Timestamp: timestamppb.Now(),
+		Type:      msgType,
+	}
+}
+
 func (s *Service) Subscribe(
 	ctx context.Context,
 	req *connect.Request[chatv1.SubscribeRequest],
 	stream *connect.ServerStream[chatv1.ChatMessage],
 ) error {
+	user := req.Msg.User
 	msgCh := s.hub.Subscribe()
 	defer s.hub.Unsubscribe(msgCh)
 
-	fmt.Printf("👤 Client subscribed: %s\n", req.Msg.User)
+	fmt.Printf("👤 Client subscribed: %s\n", user)
+
+	// 入室メッセージを送信
+	joinMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_JOIN)
+	s.hub.Broadcast(joinMsg)
 
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Printf("👋 Client disconnected: %s\n", req.Msg.User)
+			// 退室メッセージを送信
+			leaveMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_LEAVE)
+			s.hub.Broadcast(leaveMsg)
+			fmt.Printf("👋 Client disconnected: %s\n", user)
 			return nil
 		case msg := <-msgCh:
 			if err := stream.Send(msg); err != nil {

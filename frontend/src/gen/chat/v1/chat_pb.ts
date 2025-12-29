@@ -2,8 +2,8 @@
 // @generated from file chat/v1/chat.proto (package chat.v1, syntax proto3)
 /* eslint-disable */
 
-import type { GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
-import { fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
+import type { GenEnum, GenFile, GenMessage, GenService } from "@bufbuild/protobuf/codegenv1";
+import { enumDesc, fileDesc, messageDesc, serviceDesc } from "@bufbuild/protobuf/codegenv1";
 import type { Timestamp } from "@bufbuild/protobuf/wkt";
 import { file_google_protobuf_timestamp } from "@bufbuild/protobuf/wkt";
 import { file_buf_validate_validate } from "../../buf/validate/validate_pb";
@@ -13,7 +13,7 @@ import type { Message } from "@bufbuild/protobuf";
  * Describes the file chat/v1/chat.proto.
  */
 export const file_chat_v1_chat: GenFile = /*@__PURE__*/
-  fileDesc("ChJjaGF0L3YxL2NoYXQucHJvdG8SB2NoYXQudjEiZwoLQ2hhdE1lc3NhZ2USCgoCaWQYASABKAkSDAoEdXNlchgCIAEoCRIPCgdjb250ZW50GAMgASgJEi0KCXRpbWVzdGFtcBgEIAEoCzIaLmdvb2dsZS5wcm90b2J1Zi5UaW1lc3RhbXAiRQoSU2VuZE1lc3NhZ2VSZXF1ZXN0EhUKBHVzZXIYASABKAlCB7pIBHICEAESGAoHY29udGVudBgCIAEoCUIHukgEcgIQASI8ChNTZW5kTWVzc2FnZVJlc3BvbnNlEiUKB21lc3NhZ2UYASABKAsyFC5jaGF0LnYxLkNoYXRNZXNzYWdlIiAKEFN1YnNjcmliZVJlcXVlc3QSDAoEdXNlchgBIAEoCTKXAQoLQ2hhdFNlcnZpY2USSAoLU2VuZE1lc3NhZ2USGy5jaGF0LnYxLlNlbmRNZXNzYWdlUmVxdWVzdBocLmNoYXQudjEuU2VuZE1lc3NhZ2VSZXNwb25zZRI+CglTdWJzY3JpYmUSGS5jaGF0LnYxLlN1YnNjcmliZVJlcXVlc3QaFC5jaGF0LnYxLkNoYXRNZXNzYWdlMAFCQ1pBZ2l0aHViLmNvbS95dXVraTEwMzYvbmV4dGpzLWNvbm5lY3QtZ28vYmFja2VuZC9nZW4vY2hhdC92MTtjaGF0djFiBnByb3RvMw", [file_google_protobuf_timestamp, file_buf_validate_validate]);
+  fileDesc("ChJjaGF0L3YxL2NoYXQucHJvdG8SB2NoYXQudjEiiwEKC0NoYXRNZXNzYWdlEgoKAmlkGAEgASgJEgwKBHVzZXIYAiABKAkSDwoHY29udGVudBgDIAEoCRItCgl0aW1lc3RhbXAYBCABKAsyGi5nb29nbGUucHJvdG9idWYuVGltZXN0YW1wEiIKBHR5cGUYBSABKA4yFC5jaGF0LnYxLk1lc3NhZ2VUeXBlIkUKElNlbmRNZXNzYWdlUmVxdWVzdBIVCgR1c2VyGAEgASgJQge6SARyAhABEhgKB2NvbnRlbnQYAiABKAlCB7pIBHICEAEiPAoTU2VuZE1lc3NhZ2VSZXNwb25zZRIlCgdtZXNzYWdlGAEgASgLMhQuY2hhdC52MS5DaGF0TWVzc2FnZSIgChBTdWJzY3JpYmVSZXF1ZXN0EgwKBHVzZXIYASABKAkqdAoLTWVzc2FnZVR5cGUSHAoYTUVTU0FHRV9UWVBFX1VOU1BFQ0lGSUVEEAASGAoUTUVTU0FHRV9UWVBFX01FU1NBR0UQARIVChFNRVNTQUdFX1RZUEVfSk9JThACEhYKEk1FU1NBR0VfVFlQRV9MRUFWRRADMpcBCgtDaGF0U2VydmljZRJICgtTZW5kTWVzc2FnZRIbLmNoYXQudjEuU2VuZE1lc3NhZ2VSZXF1ZXN0GhwuY2hhdC52MS5TZW5kTWVzc2FnZVJlc3BvbnNlEj4KCVN1YnNjcmliZRIZLmNoYXQudjEuU3Vic2NyaWJlUmVxdWVzdBoULmNoYXQudjEuQ2hhdE1lc3NhZ2UwAUJDWkFnaXRodWIuY29tL3l1dWtpMTAzNi9uZXh0anMtY29ubmVjdC1nby9iYWNrZW5kL2dlbi9jaGF0L3YxO2NoYXR2MWIGcHJvdG8z", [file_google_protobuf_timestamp, file_buf_validate_validate]);
 
 /**
  * @generated from message chat.v1.ChatMessage
@@ -38,6 +38,11 @@ export type ChatMessage = Message<"chat.v1.ChatMessage"> & {
    * @generated from field: google.protobuf.Timestamp timestamp = 4;
    */
   timestamp?: Timestamp;
+
+  /**
+   * @generated from field: chat.v1.MessageType type = 5;
+   */
+  type: MessageType;
 };
 
 /**
@@ -102,6 +107,37 @@ export type SubscribeRequest = Message<"chat.v1.SubscribeRequest"> & {
  */
 export const SubscribeRequestSchema: GenMessage<SubscribeRequest> = /*@__PURE__*/
   messageDesc(file_chat_v1_chat, 3);
+
+/**
+ * @generated from enum chat.v1.MessageType
+ */
+export enum MessageType {
+  /**
+   * @generated from enum value: MESSAGE_TYPE_UNSPECIFIED = 0;
+   */
+  UNSPECIFIED = 0,
+
+  /**
+   * @generated from enum value: MESSAGE_TYPE_MESSAGE = 1;
+   */
+  MESSAGE = 1,
+
+  /**
+   * @generated from enum value: MESSAGE_TYPE_JOIN = 2;
+   */
+  JOIN = 2,
+
+  /**
+   * @generated from enum value: MESSAGE_TYPE_LEAVE = 3;
+   */
+  LEAVE = 3,
+}
+
+/**
+ * Describes the enum chat.v1.MessageType.
+ */
+export const MessageTypeSchema: GenEnum<MessageType> = /*@__PURE__*/
+  enumDesc(file_chat_v1_chat, 0);
 
 /**
  * @generated from service chat.v1.ChatService

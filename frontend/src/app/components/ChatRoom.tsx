@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, FormEvent } from 'react';
 import { chatClient } from '@/lib/chat-client';
-import type { ChatMessage } from '@/gen/chat/v1/chat_pb';
+import { MessageType, type ChatMessage } from '@/gen/chat/v1/chat_pb';
 import { Code, ConnectError } from '@connectrpc/connect';
 
 export function ChatRoom() {
@@ -12,6 +12,7 @@ export function ChatRoom() {
   const [inputMessage, setInputMessage] = useState('');
   const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   // 新しいメッセージが来たら自動スクロール
   useEffect(() => {
@@ -23,9 +24,14 @@ export function ChatRoom() {
     if (!isJoined) return;
 
     const abortController = new AbortController();
+    abortControllerRef.current = abortController;
     setIsConnected(true);
 
-    const stream = chatClient.subscribe({}, { signal: abortController.signal });
+    // ユーザー名を渡して購読開始
+    const stream = chatClient.subscribe(
+      { user: username },
+      { signal: abortController.signal }
+    );
 
     (async () => {
       try {
@@ -45,7 +51,7 @@ export function ChatRoom() {
     return () => {
       abortController.abort();
     };
-  }, [isJoined]);
+  }, [isJoined, username]);
 
   // メッセージ送信
   const handleSendMessage = async (e: FormEvent) => {
@@ -61,6 +67,13 @@ export function ChatRoom() {
     } catch (error) {
       console.error('Failed to send message:', error);
     }
+  };
+
+  // 退室処理
+  const handleLeave = () => {
+    abortControllerRef.current?.abort();
+    setIsJoined(false);
+    setMessages([]);
   };
 
   // 参加フォーム
@@ -102,9 +115,17 @@ export function ChatRoom() {
     <div className="h-[500px] flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
       {/* ヘッダー */}
       <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-        <span className="text-sm text-slate-600">
-          <span className="font-medium text-slate-800">{username}</span> としてログイン中
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-slate-600">
+            <span className="font-medium text-slate-800">{username}</span> としてログイン中
+          </span>
+          <button
+            onClick={handleLeave}
+            className="px-3 py-1 text-xs text-red-600 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 rounded-lg transition-all"
+          >
+            退室
+          </button>
+        </div>
         <div className="flex items-center gap-2">
           <span
             className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}
@@ -122,25 +143,39 @@ export function ChatRoom() {
             <p className="text-slate-400">メッセージはまだありません</p>
           </div>
         ) : (
-          messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`flex ${msg.user === username ? 'justify-end' : 'justify-start'}`}
-            >
+          messages.map((msg, index) => {
+            // システムメッセージ（入退室）
+            if (msg.type === MessageType.JOIN || msg.type === MessageType.LEAVE) {
+              return (
+                <div key={index} className="flex justify-center">
+                  <span className="px-3 py-1 bg-slate-200 text-slate-600 text-xs rounded-full">
+                    {msg.user} さんが{msg.type === MessageType.JOIN ? '入室' : '退室'}しました
+                  </span>
+                </div>
+              );
+            }
+
+            // 通常メッセージ
+            return (
               <div
-                className={`max-w-xs px-4 py-2.5 rounded-2xl ${
-                  msg.user === username
-                    ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-md'
-                    : 'bg-white text-slate-800 border border-slate-200 rounded-bl-md shadow-sm'
-                }`}
+                key={index}
+                className={`flex ${msg.user === username ? 'justify-end' : 'justify-start'}`}
               >
-                <p className={`text-xs font-medium mb-1 ${msg.user === username ? 'text-teal-100' : 'text-slate-500'}`}>
-                  {msg.user === username ? 'あなた' : msg.user}
-                </p>
-                <p className="text-sm">{msg.content}</p>
+                <div
+                  className={`max-w-xs px-4 py-2.5 rounded-2xl ${
+                    msg.user === username
+                      ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-md'
+                      : 'bg-white text-slate-800 border border-slate-200 rounded-bl-md shadow-sm'
+                  }`}
+                >
+                  <p className={`text-xs font-medium mb-1 ${msg.user === username ? 'text-teal-100' : 'text-slate-500'}`}>
+                    {msg.user === username ? 'あなた' : msg.user}
+                  </p>
+                  <p className="text-sm">{msg.content}</p>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
         <div ref={messagesEndRef} />
       </div>

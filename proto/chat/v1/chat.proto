@@ -7,11 +7,19 @@ option go_package = "github.com/yuuki1036/nextjs-connect-go/backend/gen/chat/v1;
 import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
 
+enum MessageType {
+  MESSAGE_TYPE_UNSPECIFIED = 0;
+  MESSAGE_TYPE_MESSAGE = 1;
+  MESSAGE_TYPE_JOIN = 2;
+  MESSAGE_TYPE_LEAVE = 3;
+}
+
 message ChatMessage {
   string id = 1;
   string user = 2;
   string content = 3;
   google.protobuf.Timestamp timestamp = 4;
+  MessageType type = 5;
 }
 
 message SendMessageRequest {
