@@ -46,54 +46,33 @@ export function TodoApp({ todosPromise }: TodoAppProps) {
   };
 
   return (
-    <>
+    <div className="space-y-6">
       {/* TODO 作成フォーム */}
-      <form action={handleCreateTodo} style={{ marginBottom: '20px' }}>
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            name="title"
-            placeholder="タイトル"
-            required
-            style={{
-              width: '100%',
-              padding: '8px',
-              fontSize: '16px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
-            disabled={isPending}
-          />
-        </div>
+      <form
+        action={handleCreateTodo}
+        className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 space-y-4"
+      >
+        <input
+          type="text"
+          name="title"
+          placeholder="タイトル"
+          required
+          disabled={isPending}
+          className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        />
 
-        <div style={{ marginBottom: '10px' }}>
-          <input
-            type="text"
-            name="description"
-            placeholder="説明（オプション）"
-            style={{
-              width: '100%',
-              padding: '8px',
-              fontSize: '16px',
-              border: '1px solid #ccc',
-              borderRadius: '4px',
-            }}
-            disabled={isPending}
-          />
-        </div>
+        <input
+          type="text"
+          name="description"
+          placeholder="説明（オプション）"
+          disabled={isPending}
+          className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        />
 
         <button
           type="submit"
           disabled={isPending}
-          style={{
-            padding: '10px 20px',
-            fontSize: '16px',
-            backgroundColor: isPending ? '#ccc' : '#0070f3',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: isPending ? 'not-allowed' : 'pointer',
-          }}
+          className="w-full sm:w-auto bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-medium px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? '処理中...' : 'TODO を追加'}
         </button>
@@ -101,84 +80,61 @@ export function TodoApp({ todosPromise }: TodoAppProps) {
 
       {/* TODO 一覧 */}
       <div>
-        <h2>TODO 一覧 ({todos.length}件)</h2>
+        <h2 className="text-lg font-semibold text-slate-800 mb-4">
+          TODO 一覧
+          <span className="ml-2 text-sm font-normal text-slate-500">
+            ({todos.length}件)
+          </span>
+        </h2>
 
         {todos.length === 0 ? (
-          <p style={{ color: '#666' }}>TODO がありません</p>
+          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-12 text-center">
+            <p className="text-slate-400">TODO がありません</p>
+          </div>
         ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
+          <ul className="space-y-3">
             {todos.map((todo) => (
               <li
                 key={todo.id}
-                style={{
-                  padding: '15px',
-                  marginBottom: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '4px',
-                  backgroundColor: todo.completed ? '#f0f0f0' : 'white',
-                  opacity: isPending ? 0.6 : 1,
-                }}
+                className={`bg-white rounded-2xl shadow-sm border border-slate-200 p-5 transition-all ${
+                  isPending ? 'opacity-60' : ''
+                } ${todo.completed ? 'bg-slate-50' : ''}`}
               >
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                  }}
-                >
+                <div className="flex items-start gap-4">
                   <input
                     type="checkbox"
                     checked={todo.completed}
                     onChange={() => handleToggleTodo(todo.id, todo.completed)}
-                    style={{ cursor: 'pointer' }}
                     disabled={isPending}
+                    className="mt-1 w-5 h-5 rounded-md border-slate-300 text-emerald-500 focus:ring-emerald-500 cursor-pointer disabled:cursor-not-allowed"
                   />
 
-                  <div style={{ flex: 1 }}>
+                  <div className="flex-1 min-w-0">
                     <div
-                      style={{
-                        fontWeight: 'bold',
-                        textDecoration: todo.completed ? 'line-through' : 'none',
-                        color: todo.completed ? '#999' : 'black',
-                      }}
+                      className={`font-medium ${
+                        todo.completed
+                          ? 'line-through text-slate-400'
+                          : 'text-slate-800'
+                      }`}
                     >
                       {todo.title}
                     </div>
 
                     {todo.description && (
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          color: '#666',
-                          marginTop: '4px',
-                        }}
-                      >
+                      <p className="mt-1 text-sm text-slate-500">
                         {todo.description}
-                      </div>
+                      </p>
                     )}
 
-                    <div
-                      style={{
-                        fontSize: '12px',
-                        color: '#999',
-                        marginTop: '4px',
-                      }}
-                    >
+                    <p className="mt-2 text-xs text-slate-400">
                       作成: {timestampDate(todo.createdAt!).toLocaleString('ja-JP')}
-                    </div>
+                    </p>
                   </div>
 
                   <button
                     onClick={() => handleDeleteTodo(todo.id)}
                     disabled={isPending}
-                    style={{
-                      padding: '5px 10px',
-                      backgroundColor: isPending ? '#ccc' : '#ff4444',
-                      color: 'white',
-                      border: 'none',
-                      borderRadius: '4px',
-                      cursor: isPending ? 'not-allowed' : 'pointer',
-                    }}
+                    className="px-3 py-1.5 text-sm text-red-600 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     削除
                   </button>
@@ -188,6 +144,6 @@ export function TodoApp({ todosPromise }: TodoAppProps) {
           </ul>
         )}
       </div>
-    </>
+    </div>
   );
 }
