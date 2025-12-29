@@ -1,20 +1,16 @@
-import { Suspense } from 'react';
-import { getTodos } from './actions/todo';
-import { TodoApp } from './components/TodoApp';
-
 export default function Page() {
-  const todosPromise = getTodos();
-
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
-      <h1>Connect TODO App (BFF Pattern)</h1>
-      <p style={{ color: '#666', fontSize: '14px', marginBottom: '20px' }}>
-        Next.js Server Actions + Connect-Node
+    <div className="max-w-2xl mx-auto px-4">
+      <h1 className="text-2xl font-bold text-gray-800 mb-4">
+        Connect × Next.js × Go
+      </h1>
+      <p className="text-gray-600">
+        gRPC 互換の Connect を使った検証プロジェクトです。
       </p>
-
-      <Suspense fallback={<div>Loading todos...</div>}>
-        <TodoApp todosPromise={todosPromise} />
-      </Suspense>
+      <ul className="mt-4 text-gray-600 list-disc list-inside">
+        <li>TODO App - Unary RPC（Server Actions 経由）</li>
+        <li>Chat App - Server Streaming RPC（ブラウザ直接）</li>
+      </ul>
     </div>
   );
 }
