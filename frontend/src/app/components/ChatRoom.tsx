@@ -66,8 +66,9 @@ export function ChatRoom() {
   // 参加フォーム
   if (!isJoined) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <p className="text-gray-600 mb-4">ユーザー名を入力して参加してください</p>
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 max-w-md">
+        <h2 className="text-xl font-semibold text-slate-800 mb-2">チャットに参加</h2>
+        <p className="text-slate-600 text-sm mb-6">ユーザー名を入力してください</p>
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -75,18 +76,19 @@ export function ChatRoom() {
               setIsJoined(true);
             }
           }}
+          className="space-y-4"
         >
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="ユーザー名"
-            className="w-full px-4 py-2 border rounded-lg mb-4 text-gray-800"
+            className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
             autoFocus
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-medium py-3 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all shadow-sm hover:shadow-md"
           >
             参加する
           </button>
@@ -97,25 +99,28 @@ export function ChatRoom() {
 
   // チャット画面
   return (
-    <div className="h-[500px] flex flex-col bg-white rounded-lg shadow-md">
-      {/* 接続状態インジケーター */}
-      <div className="p-3 border-b flex justify-end">
+    <div className="h-[500px] flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+      {/* ヘッダー */}
+      <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+        <span className="text-sm text-slate-600">
+          <span className="font-medium text-slate-800">{username}</span> としてログイン中
+        </span>
         <div className="flex items-center gap-2">
           <span
-            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+            className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}
           />
-          <span className="text-sm text-gray-600">
+          <span className="text-sm text-slate-600">
             {isConnected ? '接続中' : '切断'}
           </span>
         </div>
       </div>
 
       {/* メッセージ一覧 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
         {messages.length === 0 ? (
-          <p className="text-center text-gray-500">
-            メッセージはまだありません
-          </p>
+          <div className="flex items-center justify-center h-full">
+            <p className="text-slate-400">メッセージはまだありません</p>
+          </div>
         ) : (
           messages.map((msg, index) => (
             <div
@@ -123,15 +128,16 @@ export function ChatRoom() {
               className={`flex ${msg.user === username ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${msg.user === username
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-100 text-gray-800'
-                  }`}
+                className={`max-w-xs px-4 py-2.5 rounded-2xl ${
+                  msg.user === username
+                    ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-md'
+                    : 'bg-white text-slate-800 border border-slate-200 rounded-bl-md shadow-sm'
+                }`}
               >
-                <p className="text-xs font-semibold mb-1">
+                <p className={`text-xs font-medium mb-1 ${msg.user === username ? 'text-teal-100' : 'text-slate-500'}`}>
                   {msg.user === username ? 'あなた' : msg.user}
                 </p>
-                <p>{msg.content}</p>
+                <p className="text-sm">{msg.content}</p>
               </div>
             </div>
           ))
@@ -140,17 +146,17 @@ export function ChatRoom() {
       </div>
 
       {/* メッセージ入力 */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t flex gap-2">
+      <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-200 flex gap-3 bg-white">
         <input
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder="メッセージを入力..."
-          className="flex-1 px-4 py-2 border rounded-lg text-gray-800"
+          className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+          className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-6 py-2.5 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all font-medium shadow-sm hover:shadow-md"
         >
           送信
         </button>
