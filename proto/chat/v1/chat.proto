@@ -7,6 +7,8 @@ option go_package = "github.com/yuuki1036/nextjs-connect-go/backend/gen/chat/v1;
 import "google/protobuf/timestamp.proto";
 import "buf/validate/validate.proto";
 
+// enumにはprotoの後方互換性を保つため`XXX_UNSPECIFIED = 0`を指定することが推奨されている
+// フォールバック時に不明な値として認識させるため`0`には意味を持たせない
 enum MessageType {
   MESSAGE_TYPE_UNSPECIFIED = 0;
   MESSAGE_TYPE_MESSAGE = 1;
@@ -36,8 +38,6 @@ message SubscribeRequest {
 }
 
 service ChatService {
-  // Unary RPC: メッセージを送信 → 結果を1回返す
   rpc SendMessage(SendMessageRequest) returns (SendMessageResponse);
-  // Server Streaming RPC: 購読開始 → 新着メッセージが継続的に流れてくる
   rpc Subscribe(SubscribeRequest) returns (stream ChatMessage);
 }

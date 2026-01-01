@@ -109,6 +109,9 @@ export const SubscribeRequestSchema: GenMessage<SubscribeRequest> = /*@__PURE__*
   messageDesc(file_chat_v1_chat, 3);
 
 /**
+ * enumにはprotoの後方互換性を保つため`XXX_UNSPECIFIED = 0`を指定することが推奨されている
+ * フォールバック時に不明な値として認識させるため`0`には意味を持たせない
+ *
  * @generated from enum chat.v1.MessageType
  */
 export enum MessageType {
@@ -144,8 +147,6 @@ export const MessageTypeSchema: GenEnum<MessageType> = /*@__PURE__*/
  */
 export const ChatService: GenService<{
   /**
-   * Unary RPC: メッセージを送信 → 結果を1回返す
-   *
    * @generated from rpc chat.v1.ChatService.SendMessage
    */
   sendMessage: {
@@ -154,8 +155,6 @@ export const ChatService: GenService<{
     output: typeof SendMessageResponseSchema;
   },
   /**
-   * Server Streaming RPC: 購読開始 → 新着メッセージが継続的に流れてくる
-   *
    * @generated from rpc chat.v1.ChatService.Subscribe
    */
   subscribe: {

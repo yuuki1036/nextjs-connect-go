@@ -41,9 +41,7 @@ const (
 
 // ChatServiceClient is a client for the chat.v1.ChatService service.
 type ChatServiceClient interface {
-	// Unary RPC: メッセージを送信 → 結果を1回返す
 	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
-	// Server Streaming RPC: 購読開始 → 新着メッセージが継続的に流れてくる
 	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest]) (*connect.ServerStreamForClient[v1.ChatMessage], error)
 }
 
@@ -91,9 +89,7 @@ func (c *chatServiceClient) Subscribe(ctx context.Context, req *connect.Request[
 
 // ChatServiceHandler is an implementation of the chat.v1.ChatService service.
 type ChatServiceHandler interface {
-	// Unary RPC: メッセージを送信 → 結果を1回返す
 	SendMessage(context.Context, *connect.Request[v1.SendMessageRequest]) (*connect.Response[v1.SendMessageResponse], error)
-	// Server Streaming RPC: 購読開始 → 新着メッセージが継続的に流れてくる
 	Subscribe(context.Context, *connect.Request[v1.SubscribeRequest], *connect.ServerStream[v1.ChatMessage]) error
 }
 

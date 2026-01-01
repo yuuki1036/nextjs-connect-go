@@ -23,6 +23,8 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+// enumにはprotoの後方互換性を保つため`XXX_UNSPECIFIED = 0`を指定することが推奨されている
+// フォールバック時に不明な値として認識させるため`0`には意味を持たせない
 type MessageType int32
 
 const (
