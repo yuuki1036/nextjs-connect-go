@@ -12,13 +12,13 @@ import (
 )
 
 type Service struct {
-	hub       *Hub
+	broker    *Broker
 	messageID atomic.Int64
 }
 
 func NewService() *Service {
 	return &Service{
-		hub: NewHub(),
+		broker: NewBroker(),
 	}
 }
 
@@ -36,7 +36,7 @@ func (s *Service) SendMessage(
 		Type:      chatv1.MessageType_MESSAGE_TYPE_MESSAGE,
 	}
 
-	s.hub.Broadcast(msg)
+	s.broker.Broadcast(msg)
 
 	return connect.NewResponse(&chatv1.SendMessageResponse{
 		Message: msg,
@@ -59,21 +59,21 @@ func (s *Service) Subscribe(
 	stream *connect.ServerStream[chatv1.ChatMessage],
 ) error {
 	user := req.Msg.User
-	msgCh := s.hub.Subscribe()
-	defer s.hub.Unsubscribe(msgCh)
+	msgCh := s.broker.Subscribe()
+	defer s.broker.Unsubscribe(msgCh)
 
 	fmt.Printf("👤 Client subscribed: %s\n", user)
 
 	// 入室メッセージを送信
 	joinMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_JOIN)
-	s.hub.Broadcast(joinMsg)
+	s.broker.Broadcast(joinMsg)
 
 	for {
 		select {
 		case <-ctx.Done():
 			// 退室メッセージを送信
 			leaveMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_LEAVE)
-			s.hub.Broadcast(leaveMsg)
+			s.broker.Broadcast(leaveMsg)
 			fmt.Printf("👋 Client disconnected: %s\n", user)
 			return nil
 		case msg := <-msgCh:
