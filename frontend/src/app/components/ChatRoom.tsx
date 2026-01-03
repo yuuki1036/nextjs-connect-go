@@ -14,12 +14,10 @@ export function ChatRoom() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
-  // 新しいメッセージが来たら自動スクロール
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // ストリーミング購読を開始
   useEffect(() => {
     if (!isJoined) return;
 
@@ -27,8 +25,7 @@ export function ChatRoom() {
     abortControllerRef.current = abortController;
     setIsConnected(true);
 
-    // ユーザー名を渡して購読開始
-    const stream = chatClient.subscribe(
+    const stream: AsyncIterable<ChatMessage> = chatClient.subscribe(
       { user: username },
       { signal: abortController.signal }
     );
@@ -53,7 +50,6 @@ export function ChatRoom() {
     };
   }, [isJoined, username]);
 
-  // メッセージ送信
   const handleSendMessage = async (e: FormEvent) => {
     e.preventDefault();
     if (!inputMessage.trim()) return;
@@ -69,39 +65,36 @@ export function ChatRoom() {
     }
   };
 
-  // 退室処理
+  const handleJoin = (e: FormEvent) => {
+    e.preventDefault();
+    if (username.trim()) {
+      setIsJoined(true);
+    };
+  };
+
   const handleLeave = () => {
     abortControllerRef.current?.abort();
     setIsJoined(false);
     setMessages([]);
   };
 
-  // 参加フォーム
   if (!isJoined) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 max-w-md">
-        <h2 className="text-xl font-semibold text-slate-800 mb-2">チャットに参加</h2>
-        <p className="text-slate-600 text-sm mb-6">ユーザー名を入力してください</p>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (username.trim()) {
-              setIsJoined(true);
-            }
-          }}
-          className="space-y-4"
-        >
+      <div className="bg-white border border-slate-200 p-6 max-w-sm">
+        <h2 className="font-medium text-slate-800">チャットに参加</h2>
+        <p className="text-slate-500 text-sm mt-1">ユーザー名を入力してください</p>
+        <form onSubmit={handleJoin} className="mt-4 space-y-3">
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="ユーザー名"
-            className="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+            className="w-full px-3 py-2 border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-500"
             autoFocus
           />
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white font-medium py-3 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all shadow-sm hover:shadow-md"
+            className="w-full bg-slate-800 text-white py-2 hover:bg-slate-700"
           >
             参加する
           </button>
@@ -110,41 +103,37 @@ export function ChatRoom() {
     );
   }
 
-  // チャット画面
   return (
-    <div className="h-[500px] flex flex-col bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-      {/* ヘッダー */}
-      <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+    <div className="h-[480px] flex flex-col bg-white border border-slate-200">
+      <div className="px-4 py-3 border-b border-slate-200 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <span className="text-sm text-slate-600">
-            <span className="font-medium text-slate-800">{username}</span> としてログイン中
+            <span className="font-medium text-slate-800">{username}</span>
           </span>
           <button
             onClick={handleLeave}
-            className="px-3 py-1 text-xs text-red-600 hover:text-white hover:bg-red-500 border border-red-200 hover:border-red-500 rounded-lg transition-all"
+            className="px-2 py-1 text-xs text-slate-600 hover:text-slate-800 border border-slate-300 hover:border-slate-400"
           >
             退室
           </button>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span
-            className={`w-2.5 h-2.5 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`}
+            className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-slate-300'}`}
           />
-          <span className="text-sm text-slate-600">
+          <span className="text-xs text-slate-500">
             {isConnected ? '接続中' : '切断'}
           </span>
         </div>
       </div>
 
-      {/* メッセージ一覧 */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50">
+      <div className="flex-1 overflow-y-auto p-4 space-y-2 bg-slate-50">
         {messages.length === 0 ? (
           <div className="flex items-center justify-center h-full">
-            <p className="text-slate-400">メッセージはまだありません</p>
+            <p className="text-sm text-slate-400">メッセージはまだありません</p>
           </div>
         ) : (
           messages.map((msg, index) => {
-            // システムメッセージ（入退室）
             if (msg.type === MessageType.JOIN || msg.type === MessageType.LEAVE) {
               return (
                 <div key={index} className="flex justify-center">
@@ -155,21 +144,12 @@ export function ChatRoom() {
               );
             }
 
-            // 通常メッセージ
+            const isOwn = msg.user === username;
             return (
-              <div
-                key={index}
-                className={`flex ${msg.user === username ? 'justify-end' : 'justify-start'}`}
-              >
-                <div
-                  className={`max-w-xs px-4 py-2.5 rounded-2xl ${
-                    msg.user === username
-                      ? 'bg-gradient-to-r from-teal-500 to-emerald-500 text-white rounded-br-md'
-                      : 'bg-white text-slate-800 border border-slate-200 rounded-bl-md shadow-sm'
-                  }`}
-                >
-                  <p className={`text-xs font-medium mb-1 ${msg.user === username ? 'text-teal-100' : 'text-slate-500'}`}>
-                    {msg.user === username ? 'あなた' : msg.user}
+              <div key={index} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-xs px-3 py-2 rounded-lg ${isOwn ? 'bg-slate-800 text-white' : 'bg-white border border-slate-200 text-slate-800'}`}>
+                  <p className={`text-xs mb-0.5 ${isOwn ? 'text-slate-400' : 'text-slate-500'}`}>
+                    {isOwn ? '' : msg.user}
                   </p>
                   <p className="text-sm">{msg.content}</p>
                 </div>
@@ -180,18 +160,17 @@ export function ChatRoom() {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* メッセージ入力 */}
-      <form onSubmit={handleSendMessage} className="p-4 border-t border-slate-200 flex gap-3 bg-white">
+      <form onSubmit={handleSendMessage} className="p-3 border-t border-slate-200 flex gap-2">
         <input
           type="text"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
           placeholder="メッセージを入力..."
-          className="flex-1 px-4 py-2.5 border border-slate-300 rounded-xl text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
+          className="flex-1 px-3 py-2 border border-slate-300 text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-slate-500"
         />
         <button
           type="submit"
-          className="bg-gradient-to-r from-teal-500 to-emerald-500 text-white px-6 py-2.5 rounded-xl hover:from-teal-600 hover:to-emerald-600 transition-all font-medium shadow-sm hover:shadow-md"
+          className="bg-slate-800 text-white px-4 py-2 hover:bg-slate-700 text-sm"
         >
           送信
         </button>
