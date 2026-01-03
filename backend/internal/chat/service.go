@@ -43,7 +43,6 @@ func (s *Service) SendMessage(
 	}), nil
 }
 
-// システムメッセージを作成するヘルパー
 func (s *Service) createSystemMessage(user string, msgType chatv1.MessageType) *chatv1.ChatMessage {
 	return &chatv1.ChatMessage{
 		Id:        fmt.Sprintf("sys-%d", s.messageID.Add(1)),
@@ -62,19 +61,14 @@ func (s *Service) Subscribe(
 	msgCh := s.broker.Subscribe()
 	defer s.broker.Unsubscribe(msgCh)
 
-	fmt.Printf("👤 Client subscribed: %s\n", user)
-
-	// 入室メッセージを送信
 	joinMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_JOIN)
 	s.broker.Broadcast(joinMsg)
 
 	for {
 		select {
 		case <-ctx.Done():
-			// 退室メッセージを送信
 			leaveMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_LEAVE)
 			s.broker.Broadcast(leaveMsg)
-			fmt.Printf("👋 Client disconnected: %s\n", user)
 			return nil
 		case msg := <-msgCh:
 			if err := stream.Send(msg); err != nil {
