@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"connectrpc.com/connect"
+	connectcors "connectrpc.com/cors"
 	"connectrpc.com/validate"
 	"github.com/rs/cors"
 	"github.com/yuuki1036/nextjs-connect-go/backend/gen/chat/v1/chatv1connect"
@@ -40,20 +41,9 @@ func main() {
 	// CORS設定（ブラウザからの直接アクセスを許可）
 	corsHandler := cors.New(cors.Options{
 		AllowedOrigins: []string{"http://localhost:3000"},
-		AllowedMethods: []string{"GET", "POST", "OPTIONS"},
-		AllowedHeaders: []string{
-			"Content-Type",
-			"Connect-Protocol-Version",
-			"Connect-Timeout-Ms",
-			"Grpc-Timeout",
-			"X-Grpc-Web",
-			"X-User-Agent",
-		},
-		ExposedHeaders: []string{
-			"Grpc-Status",
-			"Grpc-Message",
-			"Grpc-Status-Details-Bin",
-		},
+		AllowedMethods: connectcors.AllowedMethods(),
+		AllowedHeaders: connectcors.AllowedHeaders(),
+		ExposedHeaders: connectcors.ExposedHeaders(),
 	}).Handler(mux)
 
 	addr := ":8081"
