@@ -36,7 +36,7 @@ func (s *Service) SendMessage(
 		Type:      chatv1.MessageType_MESSAGE_TYPE_MESSAGE,
 	}
 
-	s.broker.Broadcast(msg)
+	s.broker.Publish(msg)
 
 	return connect.NewResponse(&chatv1.SendMessageResponse{
 		Message: msg,
@@ -62,13 +62,13 @@ func (s *Service) Subscribe(
 	defer s.broker.Unsubscribe(msgCh)
 
 	joinMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_JOIN)
-	s.broker.Broadcast(joinMsg)
+	s.broker.Publish(joinMsg)
 
 	for {
 		select {
 		case <-ctx.Done():
 			leaveMsg := s.createSystemMessage(user, chatv1.MessageType_MESSAGE_TYPE_LEAVE)
-			s.broker.Broadcast(leaveMsg)
+			s.broker.Publish(leaveMsg)
 			return nil
 		case msg := <-msgCh:
 			if err := stream.Send(msg); err != nil {

@@ -33,7 +33,7 @@ func (b *Broker) Unsubscribe(ch chan *chatv1.ChatMessage) {
 	close(ch)
 }
 
-func (b *Broker) Broadcast(msg *chatv1.ChatMessage) {
+func (b *Broker) Publish(msg *chatv1.ChatMessage) {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 
