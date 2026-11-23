@@ -1,12 +1,15 @@
 version: v2
 clean: true
+# remote plugin は版を固定する。固定しないと buf generate のたびに最新版で作られ、
+# commit した生成物とずれる（CI の generated ジョブで検出する）。
+# connectrpc/go の版は backend/go.mod の connectrpc.com/connect と揃える。
 plugins:
-  - remote: buf.build/protocolbuffers/go
+  - remote: buf.build/protocolbuffers/go:v1.36.11
     out: ../backend/gen
     opt:
       - paths=source_relative
 
-  - remote: buf.build/connectrpc/go
+  - remote: buf.build/connectrpc/go:v1.19.1
     out: ../backend/gen
     opt:
       - paths=source_relative
