@@ -1,0 +1,45 @@
+# 依存の version updates（2026-11-23 決定）
+# - 頻度は weekly（月曜 09:00 JST）
+# - ecosystem ごとに minor と patch を 1 つの PR にまとめ、major は個別の PR にする
+# - security updates は groups に入らず、個別の PR で届く
+# - auto-merge は入れない（PR は CI を見て手でマージする）
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    groups:
+      npm-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: gomod
+    directory: /backend
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    groups:
+      gomod-minor-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: Asia/Tokyo
+    groups:
+      actions-minor-patch:
+        update-types:
+          - minor
+          - patch
