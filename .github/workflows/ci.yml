@@ -45,4 +45,23 @@ jobs:
           cache-dependency-path: backend/go.sum
       - run: go build ./...
       - run: go vet ./...
-      - run: go test ./...
+      - run: go test -race ./...
+
+  # proto と commit した生成物（backend/gen・frontend/src/gen）がずれていないかを確かめる
+  generated:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: bufbuild/buf-action@v1
+        with:
+          version: "1.75.0"
+          setup_only: true
+      - run: buf generate
+        working-directory: proto
+      - name: 生成物に差分が無いことを確かめる
+        run: |
+          git add -A
+          if ! git diff --cached --exit-code --stat; then
+            echo "::error::proto と生成物がずれている。proto/ で buf generate を走らせて、生成物を commit する"
+            exit 1
+          fi
