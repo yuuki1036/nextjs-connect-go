@@ -1,4 +1,4 @@
-.PHONY: help setup install gen dev dev-backend dev-frontend build clean clean-gen clean-build
+.PHONY: help setup install gen dev dev-backend dev-frontend build clean clean-gen clean-build test test-backend test-frontend
 
 # デフォルトターゲット
 .DEFAULT_GOAL := help
@@ -90,14 +90,13 @@ clean-build: ## ビルド成果物を削除
 	@echo "✅ ビルド成果物の削除完了"
 
 # ========================================
-# テスト（将来の拡張用）
+# テスト
 # ========================================
 
-test: ## テストを実行（未実装）
-	@echo "⚠️  テストは未実装です"
+test: test-backend ## テストを実行
 
-test-backend: ## バックエンドのテストを実行（未実装）
-	@echo "⚠️  バックエンドのテストは未実装です"
+test-backend: ## バックエンドのテストを実行
+	cd backend && go test ./...
 
 test-frontend: ## フロントエンドのテストを実行（未実装）
 	@echo "⚠️  フロントエンドのテストは未実装です"
